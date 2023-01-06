@@ -1,0 +1,69 @@
+[
+{
+    "fullname": "Mina NS",
+    "designation": "Engineer",
+    "monthlyIncome": 1000,
+    "currentBalance": 100,
+    "amountToSave": 100,
+    "username": "minnu",
+    "password": "minnu",
+    "appRegisteredMonth": "2023-01-03T14:27:00.064+00:00",
+    "transactions": [
+        {
+            "type": "credit",
+            "category": "salary",
+            "amount": "2000",
+            "date": "2023-01-05",
+            "note": null
+        },
+        {
+            "type": "debit",
+            "category": "grocery",
+            "amount": "2000",
+            "date": "2023-01-05",
+            "note": "null"
+        }
+    ],
+    "balance": [
+        {
+            "category": "salary",
+            "amount": "2000",
+            "date": "2023-01-05",
+            "bal": "52000",
+            "id": "2856111497"
+        },
+        {
+            "category": "grocery",
+            "amount": "2000",
+            "date": "2023-01-05",
+            "bal": "50000",
+            "id": "4300383138"
+        }
+    ],
+    "transacttionPerMonth": 
+        {
+            "1": [
+                {
+                    "category": "salary",
+                    "amount": "2000",
+                    "date": "2023-01-05",
+                    "bal": "52000",
+                    "id": "2856111497"
+                },
+                {
+                    "category": "grocery",
+                    "amount": "2000",
+                    "date": "2023-01-05",
+                    "bal": "50000",
+                    "id": "4300383138"
+                }
+            ],
+            "2":[
+                {
+
+            }
+        ]
+        }
+    
+}
+]

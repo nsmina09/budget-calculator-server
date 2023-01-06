@@ -14,8 +14,23 @@ const User = mongoose.model('User', {
     amountToSave: Number,
     username: String,
     password: String,
+    appRegisteredMonth: Date,
     transactions: [],
-    balance: []
+    balance: [],
+    transacttionPerMonth: {
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: [],
+        7: [],
+        8: [],
+        9: [],
+        10: [],
+        11: [],
+        12: [],
+    }
 })
 
 module.exports = {

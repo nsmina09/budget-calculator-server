@@ -3,23 +3,9 @@ const jwt = require('jsonwebtoken');
 const db = require('./db')
 
 
-userDetails = {
-    suhan: {
-        fullname: "Suhan N S",
-        designation: "graphics designer",
-        monthlyIncome: "100000",
-        currentBalance: 200000,
-        amountToSave: "2000",
-        username: "suhan",
-        password: "suhan",
-        transactions: [],
-        balance: []
-    }
-}
 
-currentUser = '';
 
-register = (fullname, designation, monthlyIncome, currentBalance, amountToSave, username, password) => {
+register = (fullname, designation, monthlyIncome, currentBalance, amountToSave, username, password, appRegisteredMonth) => {
     return db.User.findOne({ username })
         .then((user) => {
             if (user) {
@@ -37,6 +23,7 @@ register = (fullname, designation, monthlyIncome, currentBalance, amountToSave, 
                     amountToSave,
                     username,
                     password,
+                    appRegisteredMonth
                     // transactions: [],
                     // balance: []
                 });
@@ -60,6 +47,7 @@ login = (username, password) => {
                         username: username
                     }, 'budgettracking');
                     currentUser = user.fullname;
+                    this.currentUsername = username;
                     return {
                         status: true,
                         statusCode: 200,
@@ -67,7 +55,8 @@ login = (username, password) => {
                         token: token,
                         currentUser: currentUser,
                         currentUsername: username,
-                        balance: user.currentBalance
+                        balance: user.currentBalance,
+                        appRegisteredMonth: user.appRegisteredMonth
                     }
                 } else {
                     return {
@@ -87,7 +76,7 @@ login = (username, password) => {
 }
 
 
-addTransaction = (username, type, category, amount, date, note) => {
+addTransaction = (username, type, category, amount, date, note,month) => {
     return db.User.findOne({ username })
         .then(user => {
             if (user) {
@@ -111,6 +100,13 @@ addTransaction = (username, type, category, amount, date, note) => {
                     bal: user.currentBalance,
                     id: Math.floor(Math.random() * 10000000000)
                 });
+                user.transacttionPerMonth[month].push({
+                    category: category,
+                    amount: amount,
+                    date: date,
+                    bal: user.currentBalance,
+                    id: Math.floor(Math.random() * 10000000000)
+                })
                 user.save();
                 return {
                     statusCode: 200,
@@ -139,7 +135,8 @@ getTransaction = (username) => {
                 return {
                     statusCode: 200,
                     status: true,
-                    balanceArray: user.balance
+                    balanceArray: user.balance,
+                    transacttionPerMonth: user.transacttionPerMonth
                 };
             } else {
                 return {
@@ -153,21 +150,30 @@ getTransaction = (username) => {
 }
 
 deleteRow = (username) => {
+
     return db.User.findOne({ username })
         .then((user) => {
             if (user) {
-
+                let perMonthArray = user.transacttionPerMonth;
                 let balanceArray = user.balance;
                 if (balanceArray.length != 0) {
                     transactionsArray = user.transactions;
                     bpopped = balanceArray[balanceArray.length - 1];
+                    poppedDate = bpopped.date;
+                    date = new Date(poppedDate);
+                    month = date.getMonth() + 1;
+                    perMonthArray[month].pop()
                     tpopped = transactionsArray[transactionsArray.length - 1];
                     if (tpopped.type == 'credit') {
                         user.currentBalance -= Number(tpopped.amount);
                         balanceArray.pop()
+                        transactionsArray.pop()
+
                     } else if (tpopped.type == 'debit') {
                         user.currentBalance += Number(tpopped.amount);
                         balanceArray.pop()
+                        transactionsArray.pop()
+
                     }
                     user.save();
                     return {
@@ -194,11 +200,32 @@ deleteRow = (username) => {
         })
 }
 
+getLastMonthDetails = (username) => {
+    return db.User.findOne(username)
+        .then(user => {
+            if (user) {
+                return {
+                    status: true,
+                    statusCode: 200,
+                    transacttionPerMonth: user.transacttionPerMonth
+
+                }
+            } else {
+                return {
+                    statusCode: 400,
+                    status: false,
+                    message: 'failed to delete data...invalid user'
+                };
+            }
+        })
+}
+
 
 module.exports = {
     register,
     login,
     addTransaction,
     getTransaction,
-    deleteRow
+    deleteRow,
+    getLastMonthDetails
 }

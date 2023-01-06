@@ -31,7 +31,8 @@ app.post('/register', (req, res) => {
         req.body.currentBalance,
         req.body.amountToSave,
         req.body.username,
-        req.body.password)
+        req.body.password,
+        req.body.appRegisteredMonth)
         .then(result => {
             res.status(result.statusCode).json(result);
         })
@@ -55,7 +56,8 @@ app.post('/budget', jwtmiddleware, (req, res) => {
         req.body.category,
         req.body.amount,
         req.body.date,
-        req.body.note
+        req.body.note,
+       req.body.month
     ).then(result => {
         res.status(result.statusCode).json(result);
     })
@@ -72,6 +74,13 @@ app.post('/gettransaction', jwtmiddleware, (req, res) => {
 
 app.post('/delete-row',(req,res)=>{
     dataservice.deleteRow(req.body.username)
+    .then(result=>{
+        res.status(result.statusCode).json(result);
+    })
+})
+
+app.get('/last-transaction',(req,res)=>{
+    dataservice.getLastMonthDetails()
     .then(result=>{
         res.status(result.statusCode).json(result);
     })
