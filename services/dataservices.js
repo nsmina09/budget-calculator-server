@@ -76,7 +76,7 @@ login = (username, password) => {
 }
 
 
-addTransaction = (username, type, category, amount, date, note,month) => {
+addTransaction = (username, type, category, amount, date, note, month) => {
     return db.User.findOne({ username })
         .then(user => {
             if (user) {
@@ -94,6 +94,7 @@ addTransaction = (username, type, category, amount, date, note,month) => {
                     user.currentBalance -= Number(amount);
                 }
                 user.balance.push({
+                    type: type,
                     category: category,
                     amount: amount,
                     date: date,
@@ -101,6 +102,7 @@ addTransaction = (username, type, category, amount, date, note,month) => {
                     id: Math.floor(Math.random() * 10000000000)
                 });
                 user.transacttionPerMonth[month].push({
+                    type: type,
                     category: category,
                     amount: amount,
                     date: date,
@@ -135,6 +137,7 @@ getTransaction = (username) => {
                 return {
                     statusCode: 200,
                     status: true,
+                    transactionsArray: user.transactions,
                     balanceArray: user.balance,
                     transacttionPerMonth: user.transacttionPerMonth
                 };
@@ -219,6 +222,7 @@ getLastMonthDetails = (username) => {
             }
         })
 }
+
 
 
 module.exports = {
