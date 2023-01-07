@@ -99,7 +99,7 @@ addTransaction = (username, type, category, amount, date, note, month) => {
                     amount: amount,
                     date: date,
                     bal: user.currentBalance,
-                    id: Math.floor(Math.random() * 10000000000)
+
                 });
                 user.transacttionPerMonth[month].push({
                     type: type,
@@ -107,7 +107,7 @@ addTransaction = (username, type, category, amount, date, note, month) => {
                     amount: amount,
                     date: date,
                     bal: user.currentBalance,
-                    id: Math.floor(Math.random() * 10000000000)
+
                 })
                 user.save();
                 return {
@@ -153,7 +153,6 @@ getTransaction = (username) => {
 }
 
 deleteRow = (username) => {
-
     return db.User.findOne({ username })
         .then((user) => {
             if (user) {
@@ -224,6 +223,70 @@ getLastMonthDetails = (username) => {
 }
 
 
+updateLastTransaction = (username, type, category, amount, date, note, month) => {
+    return db.User.findOne({ username }).then(user => {
+        if (user) {
+            let perMonthArray = user.transacttionPerMonth[month];
+            let balanceArray = user.balance;
+            let transactionsArray = user.transactions;
+            let poppedMonth = perMonthArray.pop();
+            let poppedBalance = balanceArray.pop();
+            let poppedTransaction = transactionsArray.pop();
+            transactionsArray.push({
+                type: type,
+                category: category,
+                amount: amount,
+                date: date,
+                note: note
+            })
+            if (poppedTransaction.type == 'credit') {
+                user.currentBalance -= Number(poppedTransaction.amount);
+            } else if (poppedTransaction.type == 'debit') {
+                user.currentBalance += Number(poppedTransaction.amount);
+            }
+
+            if (type == 'credit') {
+                user.currentBalance += Number(amount);
+            } if (type == 'debit') {
+                user.currentBalance -= Number(amount);
+            }
+            balanceArray.push({
+                type: type,
+                category: category,
+                amount: amount,
+                date: date,
+                bal: user.currentBalance,
+            })
+
+            user.transacttionPerMonth[month].push({
+                type: type,
+                category: category,
+                amount: amount,
+                date: date,
+                bal: user.currentBalance,
+            })
+            user.save();
+
+           
+            return {
+                status: true,
+                statusCode: 200,
+                transactionsArray: user.transactions,
+                balanceArray: user.balance,
+                transacttionPerMonth: user.transacttionPerMonth
+            }
+
+        } else {
+            return {
+                statusCode: 400,
+                status: false,
+                message: 'failed to delete data...invalid user'
+            };
+        }
+    })
+}
+
+
 
 module.exports = {
     register,
@@ -231,5 +294,6 @@ module.exports = {
     addTransaction,
     getTransaction,
     deleteRow,
-    getLastMonthDetails
+    getLastMonthDetails,
+    updateLastTransaction
 }

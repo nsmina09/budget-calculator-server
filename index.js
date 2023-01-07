@@ -85,3 +85,17 @@ app.get('/last-transaction',(req,res)=>{
         res.status(result.statusCode).json(result);
     })
 })
+
+app.post('/update-last',(req,res)=>{
+    dataservice.updateLastTransaction(
+        req.body.username,
+        req.body.type,
+        req.body.category,
+        req.body.amount,
+        req.body.date,
+        req.body.note,
+       req.body.month
+    ).then(result => {
+        res.status(result.statusCode).json(result);
+    })
+})
